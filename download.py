@@ -5,10 +5,7 @@ import requests
 from tqdm import tqdm
 from joblib import Parallel, delayed
 import py7zr
-<<<<<<< HEAD
 from subprocess import Popen
-=======
->>>>>>> 64cf92feb0eb2c1fb136db327c014451db34cf3b
 
 def arglist():
 
@@ -30,7 +27,6 @@ def makedir(path):
     if not os.path.exists(path):
         os.makedirs(path)
 
-<<<<<<< HEAD
 def download_parallel(fnames, drive_path, path, name, args):
     root_url = "https://docs.google.com/uc?export=download"
     Parallel(n_jobs=args.ncpus)(
@@ -42,15 +38,6 @@ def download_parallel(fnames, drive_path, path, name, args):
                                  unit_scale=True,
                                  desc=f"{name}",
                                  leave=False))
-=======
-def download_parallel(fnames, drive_path, path, args):
-    root_url = "https://docs.google.com/uc?export=download"
-    Parallel(n_jobs=args.ncpus, prefer="threads")(
-            delayed(download)
-            (root_url, name, id, f"{args.directory}/{path}")
-            for name, id in tqdm(zip(fnames, drive_path),
-                                 total=len(fnames)))
->>>>>>> 64cf92feb0eb2c1fb136db327c014451db34cf3b
 
 
 def get_token(response):
@@ -61,7 +48,6 @@ def get_token(response):
 
 def save_response(response, fname, dest, chunk_size=32 * 1024):
     size = int(response.headers.get('content-length', 0))
-<<<<<<< HEAD
     if size == 0:
         raise ValueError(f"Cannot Download right now :( Content length is 0. " \
                 "This probably means Google Drive has no more bandwidth")
@@ -70,11 +56,6 @@ def save_response(response, fname, dest, chunk_size=32 * 1024):
                           total=size,
                           unit='B',
                           unit_scale=True,
-=======
-    with open(f"{dest}/{fname}", 'wb') as out:
-        for chunk in tqdm(response.iter_content(chunk_size),
-                          total=size,
->>>>>>> 64cf92feb0eb2c1fb136db327c014451db34cf3b
                           leave=False,
                           desc=fname):
             if chunk:
@@ -100,7 +81,6 @@ def extract_parallel(path, args):
 
 def extract(zip_file, path):
     print(f"Extracting: {path}/{zip_file}")
-<<<<<<< HEAD
     #archive = py7zr.SevenZipFile(f"{path}/{zip_file}", mode='r')
     #archive.extractall(path=path)
     #archive.close()
@@ -110,12 +90,6 @@ def extract(zip_file, path):
     if return_code != 0:
         raise RuntimeError(f"Archive Failed with {return_code}. Likely due to "\
         "downloading a bad file. Please check Drive's bandwidth limits.")
-=======
-    archive = py7zr.SevenZipFile(f"{path}/{zip_file}", mode='r')
-    archive.extractall(path=path)
-    archive.close()
-    os.remove(f"{path}/{zip_file}")
->>>>>>> 64cf92feb0eb2c1fb136db327c014451db34cf3b
 
 
 def CelebA(args):
@@ -167,29 +141,17 @@ def CelebA(args):
             }
 
     # Make directories and download
-<<<<<<< HEAD
     makedir(f"{args.directory}/Img/img_align_celeba")
     download_parallel(IMGS['align'],
                       IMGS['align_ids'],
                       "Img/img_align_celeba",
                       args)
     print(f"Obtained Align Images")
-=======
-    #makedir(f"{args.directory}/Img/img_align_celeba")
-    #download_parallel(IMGS['align'],
-    #                  IMGS['align_ids'],
-    #                  "Img/img_align_celeba",
-    #                  args)
-    #extract_parallel(f"Img/img_align_celeba",
-    #                 args)
-    #print(f"Obtained Align Images")
->>>>>>> 64cf92feb0eb2c1fb136db327c014451db34cf3b
 
     makedir(f"{args.directory}/Img/img_celeba")
     download_parallel(IMGS['imgs'],
                       IMGS['img_ids'],
                       "Img/img_celeba",
-<<<<<<< HEAD
                       "Images",
                       args)
     makedir(f"{args.directory}/Anno")
@@ -211,14 +173,7 @@ def CelebA(args):
                      args)
     extract_parallel(f"Img/img_celeba",
                      args)
-    extract("img_celeba.7z.001", "CelebA/Img/img_celeba/")
-=======
-                      args)
-    extract_parallel(f"Img/img_celeba",
-                     args)
-    #makedir(f"{args.directory}/Anno")
-    #makedir(f"{args.directory}/Eval")
->>>>>>> 64cf92feb0eb2c1fb136db327c014451db34cf3b
+    #extract("img_celeba.7z.001", "CelebA/Img/img_celeba/")
 
 
 def main():
